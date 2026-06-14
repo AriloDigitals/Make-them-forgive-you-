@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>💙 Apology Page · Ask for Forgiveness</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root { --blue: #4a90e2; --deepblue: #2c3e66; --light: #eef5ff; --white: #ffffff; --text: #1e2a3a; --muted: #6c8db0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--light); min-height: 100vh; }
+    .hearts-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .hb { position: absolute; animation: floatUp linear infinite; opacity: 0; }
+    @keyframes floatUp { 0% { transform: translateY(110vh) rotate(0deg); opacity: 0; } 10% { opacity: 0.7; } 90% { opacity: 0.4; } 100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; } }
+    #formPage { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+    .form-card { background: var(--white); border-radius: 32px; box-shadow: 0 25px 60px rgba(74,144,226,0.2); padding: 2.5rem 2rem; max-width: 460px; width: 100%; position: relative; }
+    .form-card::before { content: ''; position: absolute; inset: -2px; border-radius: 34px; background: linear-gradient(135deg, #4a90e2, #f8b500, #7b9fd0, #2c3e66); z-index: -1; opacity: 0.6; }
+    .mascot { display: flex; justify-content: center; margin-bottom: 1rem; }
+    .mascot-img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; box-shadow: 0 8px 28px rgba(74,144,226,0.4); }
+    .form-title { font-family: 'Playfair Display', serif; font-size: 1.9rem; text-align: center; margin-bottom: 0.4rem; color: var(--text); }
+    .form-title em { color: var(--blue); font-style: italic; }
+    .form-subtitle { text-align: center; color: var(--muted); margin-bottom: 1.8rem; }
+    .field { margin-bottom: 1.2rem; }
+    .field label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .field input, .field textarea, #customQ { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #d4e2f5; border-radius: 16px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; background: #fafcff; outline: none; transition: all 0.2s; }
+    .field input:focus, .field textarea:focus, #customQ:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(74,144,226,0.1); }
+    .question-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; display: block; }
+    .q-options { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.2rem; }
+    .q-opt { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border: 1.5px solid #d4e2f5; border-radius: 16px; cursor: pointer; transition: all 0.2s; background: #fafcff; }
+    .q-opt:hover { border-color: var(--blue); background: #eef5ff; transform: translateX(4px); }
+    .q-opt.selected { border-color: var(--blue); background: #e3efff; }
+    .q-opt input[type="radio"] { accent-color: var(--blue); width: 18px; height: 18px; }
+    #customQ { margin-top: 0.5rem; display: none; }
+    .preview-btn { width: 100%; padding: 1rem; border: none; border-radius: 60px; background: linear-gradient(135deg, var(--blue), var(--deepblue)); color: #fff; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: 0.25s; box-shadow: 0 8px 24px rgba(74,144,226,0.4); }
+    .preview-btn:hover { transform: translateY(-3px); }
+    #expPage { display: none; position: fixed; inset: 0; z-index: 100; background: linear-gradient(45deg, #4a90e2, #2c3e66, #7b9fd0, #1e2f4b); background-size: 400% 400%; animation: gradientShift 18s ease infinite; flex-direction: column; overflow: hidden; }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .prev-hearts-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 1; }
+    .watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 50; pointer-events: none; opacity: 0.08; }
+    .watermark span { font-family: 'Playfair Display', serif; font-size: clamp(1rem,5vw,2rem); color: #fff; transform: rotate(-25deg); white-space: nowrap; font-weight: bold; }
+    .top-controls { position: absolute; top: 20px; left: 16px; right: 16px; display: flex; justify-content: space-between; z-index: 60; gap: 10px; }
+    .back-btn-prev, .mute-btn { background: rgba(255,255,255,0.9); border: none; border-radius: 60px; padding: 0.5rem 1.2rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+    #expContent { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5rem 1.5rem 7rem; text-align: center; overflow-y: auto; }
+    .exp-title { font-family: 'Great Vibes', cursive; font-size: clamp(2.5rem, 9vw, 4.5rem); color: #fff; text-shadow: 0 0 20px rgba(0,0,0,0.4); margin-bottom: 1rem; white-space: pre-line; letter-spacing: 2px; font-weight: normal; }
+    .exp-msg { font-family: 'Playfair Display', serif; font-size: clamp(1rem, 4vw, 1.3rem); font-style: italic; color: rgba(255,255,255,0.95); max-width: 500px; margin: 0 auto 2rem; background: rgba(0,0,0,0.15); backdrop-filter: blur(8px); padding: 0.5rem 1rem; border-radius: 60px; }
+    .btn-row { display: flex; gap: 1.8rem; justify-content: center; flex-wrap: wrap; position: relative; }
+    .forgive-btn { padding: 0.9rem 2.5rem; font-size: 1.3rem; font-weight: 700; border: none; border-radius: 60px; background: linear-gradient(45deg, #4a90e2, #2c3e66); color: white; box-shadow: 0 12px 30px rgba(74,144,226,0.5); cursor: pointer; transition: 0.2s; font-family: 'Playfair Display', serif; }
+    .forgive-btn:hover { transform: scale(1.08); }
+    .no-btn { padding: 0.9rem 2.5rem; font-size: 1.2rem; font-weight: 600; border: none; border-radius: 60px; background: rgba(255,255,255,0.25); color: white; border: 2px solid rgba(255,255,255,0.7); backdrop-filter: blur(6px); cursor: pointer; position: fixed; z-index: 200; transition: left 0.08s, top 0.08s; font-family: 'Playfair Display', serif; }
+    #sarcasmToast { position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); backdrop-filter: blur(18px); color: #fff0f5; padding: 0.7rem 1.5rem; border-radius: 60px; font-size: 1rem; font-weight: 600; z-index: 300; opacity: 0; pointer-events: none; transition: 0.2s; white-space: nowrap; font-family: 'Playfair Display', serif; }
+    #sarcasmToast.show { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+    #celebScreen { display: none; flex-direction: column; align-items: center; width: 100%; gap: 1rem; }
+    
+    /* === CLASSIC & APOLOGY-APPROPRIATE CELEBRATION FONTS === */
+    .celeb-title { 
+      font-family: 'Playfair Display', serif; 
+      font-size: clamp(2rem, 8vw, 3.5rem); 
+      font-weight: 700;
+      font-style: italic;
+      color: #FFE484; 
+      text-shadow: 2px 2px 0 #2c3e66;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+    .celeb-msg { 
+      font-family: 'Playfair Display', serif; 
+      font-size: clamp(1.2rem, 5vw, 1.8rem); 
+      font-weight: normal;
+      font-style: normal;
+      background: rgba(0,0,0,0.2); 
+      backdrop-filter: blur(12px); 
+      padding: 0.6rem 1.5rem; 
+      border-radius: 60px; 
+      color: white; 
+      line-height: 1.4;
+    }
+    
+    .gif-box { width: min(260px,70vw); height: min(260px,70vw); border-radius: 28px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); background: #ffe0e0; border: 3px solid gold; }
+    .gif-box img { width: 100%; height: 100%; object-fit: cover; }
+    .confetti-layer { position: fixed; inset: 0; pointer-events: none; z-index: 20; }
+    .cele-heart { position: absolute; animation: confettiRain linear forwards; }
+    @keyframes confettiRain { 0% { transform: translateY(100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(-50px) rotate(720deg); opacity: 0; } }
+    #bottomStrip { position: absolute; bottom: 0; left: 0; right: 0; z-index: 70; padding: 1rem 1.2rem env(safe-area-inset-bottom); display: flex; flex-direction: column; align-items: center; gap: 0.8rem; }
+    .gen-link-btn { padding: 0.7rem 2rem; border: none; border-radius: 60px; background: rgba(255,255,255,0.96); color: var(--deepblue); font-weight: 800; font-size: 1rem; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.2); display: inline-flex; align-items: center; gap: 8px; font-family: 'DM Sans', sans-serif; }
+    #linkBox { display: none; background: rgba(255,255,255,0.98); border-radius: 28px; padding: 1rem; text-align: center; width: 100%; max-width: 380px; }
+    .link-url { background: #eef5ff; border-radius: 16px; padding: 0.6rem; font-size: 0.75rem; word-break: break-all; margin: 0.5rem 0; font-family: monospace; }
+    .link-btns { display: flex; gap: 0.7rem; justify-content: center; }
+    .copy-link-btn, .wa-btn { padding: 0.5rem 1rem; border-radius: 60px; font-weight: 600; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+    .copy-link-btn { background: var(--blue); color: white; }
+    .wa-btn { background: #25D366; color: white; display: flex; align-items: center; gap: 5px; }
+    #panelOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 190; backdrop-filter: blur(5px); }
+    #payPanel { display: none; background: white; border-radius: 32px; padding: 1.5rem; position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); width: calc(100% - 2rem); max-width: 360px; z-index: 200; box-shadow: 0 20px 40px rgba(0,0,0,0.3); animation: slideUp 0.25s; }
+    @keyframes slideUp { from { transform: translateX(-50%) translateY(30px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+    .panel-close { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.3rem; cursor: pointer; }
+    .pay-row { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
+    .coupon-input { flex: 1; padding: 0.7rem; border: 1.5px solid #d4e2f5; border-radius: 16px; background: #fafcff; font-family: 'DM Sans', sans-serif; }
+    .apply-btn { background: var(--deepblue); color: white; border: none; padding: 0 1rem; border-radius: 40px; font-weight: bold; cursor: pointer; }
+    .pay-btn { width: 100%; padding: 0.85rem; background: linear-gradient(135deg, var(--blue), var(--deepblue)); border: none; border-radius: 60px; color: white; font-weight: 800; font-size: 1rem; margin-top: 0.5rem; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+    .burst-heart { position: fixed; font-size: 32px; z-index: 400; animation: burstOut 1.2s ease-out forwards; pointer-events: none; }
+    @keyframes burstOut { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(1.2) translate(var(--tx), var(--ty)); opacity: 0; } }
+    @media (max-width: 480px) { .form-card { padding: 1.8rem; } .forgive-btn, .no-btn { font-size: 1rem; padding: 0.7rem 1.5rem; } }
+  </style>
+</head>
+<body>
+<div class="hearts-bg" id="heartsBg"></div>
+<div id="formPage">
+  <div class="form-card">
+    <div class="mascot"><img src="https://media.tenor.com/YJ9qWp7VqX0AAAAi/sorry-cat.gif" class="mascot-img" alt="sorry cat"></div>
+    <h1 class="form-title">Make them <em>forgive</em> you 💙</h1>
+    <p class="form-subtitle">✨ A heartfelt apology they can't resist ✨</p>
+    <div class="field"><label>💔 Their Name</label><input type="text" id="theirName" placeholder="e.g., Priya" maxlength="40"></div>
+    <div class="field"><label>🙏 Your Name</label><input type="text" id="yourName" placeholder="e.g., Raj" maxlength="40"></div>
+    <span class="question-label">💙 Pick Your Apology Question</span>
+    <div class="q-options">
+      <label class="q-opt selected"><input type="radio" name="question" value="Will you forgive me?" checked><span>Will you forgive me?</span></label>
+      <label class="q-opt"><input type="radio" name="question" value="Can we start over?"><span>Can we start over?</span></label>
+      <label class="q-opt"><input type="radio" name="question" value="I'm really sorry, please forgive me?"><span>I'm really sorry, please forgive me?</span></label>
+      <label class="q-opt"><input type="radio" name="question" value="custom"><span>✨ Write your own...</span></label>
+    </div>
+    <input type="text" id="customQ" placeholder="Type your apology...">
+    <div class="field"><label>💌 Your Apology Message (after forgiveness)</label><textarea id="yourMsg" placeholder="e.g., I was wrong, and I promise to make it up to you. You mean the world to me. 💙"></textarea></div>
+    <button class="preview-btn" id="previewBtn">✨ Preview & Seek Forgiveness ✨</button>
+  </div>
+</div>
+<div id="expPage">
+  <div class="prev-hearts-bg" id="prevHeartsBg"></div>
+  <div class="watermark" id="watermarkEl"><span>🔮 PREVIEW · Arilo Digitals · PREVIEW 🔮</span></div>
+  <div class="top-controls"><button class="back-btn-prev" id="backBtnPrev" style="display: none;">← Back</button><div style="flex:1"></div><button class="mute-btn" id="muteBtnPrev">🔊</button></div>
+  <div id="expContent">
+    <div id="questionScreen"><h1 class="exp-title" id="expTitle">Will you forgive me? 💙</h1><p class="exp-msg" id="expSubMsg">From: Someone who messed up 💌</p><div class="btn-row"><button class="forgive-btn" id="forgiveBtnExp">I Forgive You 💙</button><button class="no-btn" id="noBtnExp">Not Yet 😔</button></div></div>
+    <div id="celebScreen"><h1 class="celeb-title">Thank You...</h1><p class="celeb-msg" id="celebMsg">You've made my heart whole again. I promise to be better. 🌹</p><div class="gif-box"><img id="celebGif" src="https://media.tenor.com/9Y3zRjKvT9sAAAAi/hug-forgive.gif" alt="forgiveness hug" onerror="this.src='https://media.tenor.com/1vY1pzRwIocAAAAi/hug-cute.gif'"></div><div class="confetti-layer" id="confettiLayer"></div></div>
+  </div>
+  <div id="bottomStrip"><button class="gen-link-btn" id="generateLinkBtn">💌 Generate Apology Link & Share</button><div id="linkBox"><p class="link-title">🎉 Your apology link is ready!</p><div class="link-url" id="linkUrl">link will appear</div><div class="link-btns"><button class="copy-link-btn" id="copyLinkBtn">Copy 📋</button><button class="wa-btn" id="waShareBtn">📱 WhatsApp</button></div></div></div>
+</div>
+<div id="sarcasmToast"></div>
+<div id="panelOverlay"></div>
+<div id="payPanel"><button class="panel-close" id="panelCloseBtn">✕</button><p class="panel-title">💙 Unlock Shareable Apology Page — ₹79</p><div class="pay-row"><input type="text" class="coupon-input" id="couponInput" placeholder="Coupon:" autocomplete="off"><button class="apply-btn" id="applyCoupon">Apply</button></div><p class="coupon-msg" id="couponMsg"></p><button class="pay-btn" id="payBtn">Pay ₹79 & Get Link 💕</button></div>
+<audio id="bgMusic" loop preload="auto" crossorigin="anonymous">
+  <source src="love-song.mp3" type="audio/mpeg">
+  Your browser does not support audio.
+</audio>
+
+<script>
+  // ========== YOUR LIVE RAZORPAY KEY ==========
+  const RAZORPAY_KEY_ID = "rzp_live_T1RJlj1quLB3Wc";
+  // ============================================
+
+  const HEART_EMOJIS = ['💙','💖','💕','💗','💝','🌸','✨','💘'];
+  const SARCASMS = ["Come on, forgive them na 🥺","The button ran away because it knows you want to forgive 😭","Try again… it's a forgive-only zone 💀","Even the button is blushing! Say I Forgive You","The Not Yet button is on vacation 🏖️","Forgiveness is divine... tap Yes!","I'll wait forever... ⏳","No? But my heart says forgive 💓"];
+  const COUPONS = { 
+    LOVE20DA: { discount: 20, label: 'LOVE20DA - ₹20 off' }, 
+    RS1DA: { discount: 78, label: "RS1DA - Just ₹1! 🥺" }, 
+    MAWODA: { discount: 20, label: "MAWODA - ₹20 off" },
+    FREEPAGESDA: { discount: 79, label: "FREEPAGESDA - COMPLETELY FREE 🎉" }
+  };  
+  
+  const formPage = document.getElementById('formPage'), expPage = document.getElementById('expPage'), heartsBg = document.getElementById('heartsBg'), prevHeartsBg = document.getElementById('prevHeartsBg');
+  const bgMusic = document.getElementById('bgMusic'), noBtn = document.getElementById('noBtnExp'), sarcasmToast = document.getElementById('sarcasmToast');
+  const generateLinkBtn = document.getElementById('generateLinkBtn'), linkBox = document.getElementById('linkBox'), linkUrl = document.getElementById('linkUrl');
+  const watermarkEl = document.getElementById('watermarkEl'), backBtnPrev = document.getElementById('backBtnPrev'), payPanel = document.getElementById('payPanel'), panelOverlay = document.getElementById('panelOverlay');
+  let muted = false, sarcasmIdx = 0, appliedDiscount = 0, basePrice = 79, isRecipientMode = false, previewHeartInterval = null, currentPageData = null;
+  let musicStarted = false;
+  
+  function spawnHeart(container) { const h = document.createElement('div'); h.className = 'hb'; h.textContent = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)]; h.style.left = Math.random() * 100 + '%'; h.style.animationDuration = (Math.random() * 5 + 5) + 's'; h.style.fontSize = (Math.random() * 14 + 10) + 'px'; container.appendChild(h); setTimeout(() => h.remove(), 13000); }
+  setInterval(() => spawnHeart(heartsBg), 500);
+  
+  document.querySelectorAll('.q-opt input[type=radio]').forEach(radio => { radio.addEventListener('change', () => { document.querySelectorAll('.q-opt').forEach(opt => opt.classList.remove('selected')); radio.closest('.q-opt').classList.add('selected'); document.getElementById('customQ').style.display = radio.value === 'custom' ? 'block' : 'none'; }); });
+  
+  function showSarcasm() { sarcasmToast.textContent = SARCASMS[sarcasmIdx % SARCASMS.length]; sarcasmIdx++; sarcasmToast.classList.add('show'); setTimeout(() => sarcasmToast.classList.remove('show'), 2500); }
+  
+  function startMusic() { if (!musicStarted) { bgMusic.play().then(() => { musicStarted = true; }).catch(()=>{}); } }
+  document.addEventListener('click', startMusic);
+  document.addEventListener('touchstart', startMusic);
+  window.addEventListener('load', () => { bgMusic.play().catch(()=>{}); });
+  
+  document.getElementById('muteBtnPrev').addEventListener('click', () => { muted = !muted; bgMusic.muted = muted; document.getElementById('muteBtnPrev').textContent = muted ? '🔇' : '🔊'; });
+  
+  document.getElementById('couponInput').addEventListener('input', function() { this.value = this.value.toUpperCase(); });
+  document.getElementById('applyCoupon').addEventListener('click', () => { const code = document.getElementById('couponInput').value.trim().toUpperCase(); const msg = document.getElementById('couponMsg'); const payBtn = document.getElementById('payBtn'); if (COUPONS[code]) { appliedDiscount = COUPONS[code].discount; const final = Math.max(0, basePrice - appliedDiscount); msg.textContent = '✓ ' + COUPONS[code].label; msg.style.color = '#1a8a4a'; payBtn.textContent = final === 0 ? '🎁 Get Free Link 🎁' : `Pay ₹${final} & Get Link 💕`; } else if (code === '') { appliedDiscount = 0; msg.textContent = ''; payBtn.textContent = 'Pay ₹79 & Get Link 💕'; } else { appliedDiscount = 0; msg.textContent = '✗ Invalid coupon'; msg.style.color = '#c0392b'; payBtn.textContent = 'Pay ₹79 & Get Link 💕'; } });
+  
+  function encodePageData(data) { const json = JSON.stringify(data); const bytes = new TextEncoder().encode(json); let binary = ''; bytes.forEach(b => binary += String.fromCharCode(b)); const base64 = btoa(binary); return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, ''); }
+  function decodePageData(str) { try { let base64 = str.replace(/-/g, '+').replace(/_/g, '/'); while (base64.length % 4) base64 += '='; const binary = atob(base64); const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0)); return JSON.parse(new TextDecoder().decode(bytes)); } catch(e) { return null; } }
+  function getCurrentPageData() { const theirName = document.getElementById('theirName').value.trim() || 'My Love'; const fromName = document.getElementById('yourName').value.trim() || 'Your'; let question = document.querySelector('input[name="question"]:checked')?.value || 'Will you forgive me?'; if (question === 'custom') question = document.getElementById('customQ').value.trim() || 'Please forgive me?'; const msg = document.getElementById('yourMsg').value.trim() || "I'm truly sorry. You mean everything to me. 💙"; return { theirName, fromName, question, msg }; }
+  function resetExperienceUI() { document.getElementById('questionScreen').style.display = 'block'; document.getElementById('celebScreen').style.display = 'none'; document.getElementById('confettiLayer').innerHTML = ''; linkBox.style.display = 'none'; document.getElementById('couponMsg').innerHTML = ''; document.getElementById('couponInput').value = ''; appliedDiscount = 0; document.getElementById('payBtn').textContent = 'Pay ₹79 & Get Link 💕'; sarcasmIdx = 0; if(noBtn) { noBtn.style.left = ''; noBtn.style.top = ''; } }
+  function launchExperience(data, recipientMode) { isRecipientMode = !!recipientMode; currentPageData = data; document.getElementById('expTitle').innerHTML = `${data.question}<br>${data.theirName} 💙`; document.getElementById('expSubMsg').innerHTML = `From: ${data.fromName} 🙏`; document.getElementById('celebMsg').innerHTML = `${data.msg} <span style="display:block;font-size:0.9rem;margin-top:6px;">~ ${data.fromName}</span>`; resetExperienceUI(); watermarkEl.style.display = isRecipientMode ? 'none' : 'flex'; backBtnPrev.style.display = isRecipientMode ? 'none' : 'block'; generateLinkBtn.style.display = isRecipientMode ? 'none' : 'inline-flex'; formPage.style.display = 'none'; expPage.style.display = 'flex'; startMusic(); if(previewHeartInterval) clearInterval(previewHeartInterval); prevHeartsBg.innerHTML = ''; previewHeartInterval = setInterval(() => spawnHeart(prevHeartsBg), 450); }
+  function showFormPage() { expPage.style.display = 'none'; formPage.style.display = 'flex'; closePayPanel(); bgMusic.pause(); bgMusic.currentTime = 0; if(previewHeartInterval) { clearInterval(previewHeartInterval); previewHeartInterval = null; } }
+  
+  window.addEventListener('DOMContentLoaded', () => { const params = new URLSearchParams(window.location.search); const d = params.get('d'); if (d) { const data = decodePageData(d); if (data && data.theirName && data.fromName && data.question && data.msg) { launchExperience(data, true); return; } } showFormPage(); });
+  document.getElementById('previewBtn').addEventListener('click', () => { launchExperience(getCurrentPageData(), false); });
+  backBtnPrev.addEventListener('click', showFormPage);
+  
+  function runNoBtn() { if(!noBtn) return; const maxX = window.innerWidth - noBtn.offsetWidth - 30; const maxY = window.innerHeight - noBtn.offsetHeight - 80; noBtn.style.left = Math.max(10, Math.random() * maxX) + 'px'; noBtn.style.top = Math.max(40, Math.random() * maxY) + 'px'; showSarcasm(); }
+  if(noBtn) { noBtn.addEventListener('mouseenter', runNoBtn); noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); runNoBtn(); }, { passive: false }); noBtn.addEventListener('click', (e) => { e.preventDefault(); runNoBtn(); }); }
+  
+  document.getElementById('forgiveBtnExp').addEventListener('click', () => { document.getElementById('questionScreen').style.display = 'none'; const celeb = document.getElementById('celebScreen'); celeb.style.display = 'flex'; const layer = document.getElementById('confettiLayer'); layer.innerHTML = ''; const emojis = ['💙','💖','🌸','✨','💕','🌟','💗']; for(let i=0;i<30;i++) { const c = document.createElement('div'); c.className = 'cele-heart'; c.textContent = emojis[Math.floor(Math.random()*emojis.length)]; c.style.left = Math.random()*100+'%'; c.style.fontSize = (Math.random()*16+20)+'px'; c.style.animationDuration = (Math.random()*2+3)+'s'; c.style.animationDelay = (Math.random()*3)+'s'; layer.appendChild(c); } });
+  
+  function openPayPanel() { panelOverlay.style.display = 'block'; payPanel.style.display = 'block'; }
+  function closePayPanel() { panelOverlay.style.display = 'none'; payPanel.style.display = 'none'; }
+  generateLinkBtn.addEventListener('click', openPayPanel);
+  panelOverlay.addEventListener('click', closePayPanel);
+  document.getElementById('panelCloseBtn').addEventListener('click', closePayPanel);
+  
+  function buildShareLink(data) { const encoded = encodePageData(data); const url = new URL(window.location.href); url.search = ''; url.hash = ''; url.searchParams.set('d', encoded); return url.toString(); }
+  function burstMoneyConfetti() { for(let i=0;i<40;i++) { const heart = document.createElement('div'); heart.className = 'burst-heart'; heart.textContent = HEART_EMOJIS[Math.floor(Math.random()*HEART_EMOJIS.length)]; heart.style.left = window.innerWidth/2 + (Math.random()-0.5)*150 + 'px'; heart.style.top = window.innerHeight/2 + (Math.random()-0.5)*120 + 'px'; const tx = (Math.random()-0.5)*280; const ty = (Math.random()-1)*200; heart.style.setProperty('--tx', tx+'px'); heart.style.setProperty('--ty', ty+'px'); document.body.appendChild(heart); setTimeout(()=>heart.remove(), 1300); } }
+  function onPaymentSuccess(paymentId) { closePayPanel(); const data = currentPageData || getCurrentPageData(); const link = buildShareLink(data); generateLinkBtn.style.display = 'none'; linkBox.style.display = 'block'; linkUrl.textContent = link; burstMoneyConfetti(); setTimeout(burstMoneyConfetti, 400); console.log("✅ Payment success:", paymentId); }
+  
+  document.getElementById('payBtn').addEventListener('click', () => { 
+    if (!currentPageData) currentPageData = getCurrentPageData(); 
+    const finalAmount = Math.max(0, basePrice - appliedDiscount); 
+    if (finalAmount === 0) { onPaymentSuccess('FREE_COUPON_' + Date.now()); return; }
+    const options = { key: RAZORPAY_KEY_ID, amount: finalAmount * 100, currency: "INR", name: "Apology Page", description: `For ${currentPageData.theirName}`, image: "https://media.tenor.com/YJ9qWp7VqX0AAAAi/sorry-cat.gif", handler: (response) => onPaymentSuccess(response.razorpay_payment_id), prefill: { name: currentPageData.fromName }, theme: { color: "#4a90e2" } };
+    const rzp = new Razorpay(options); rzp.open();
+  });
+  
+  document.getElementById('copyLinkBtn').addEventListener('click', () => { const link = linkUrl.textContent; navigator.clipboard.writeText(link).then(() => { const btn = document.getElementById('copyLinkBtn'); btn.textContent = 'Copied! ✓'; setTimeout(() => btn.textContent = 'Copy 📋', 2000); }); });
+  document.getElementById('waShareBtn').addEventListener('click', () => { const link = linkUrl.textContent; window.open(`https://wa.me/?text=${encodeURIComponent(`💙 I made an apology page just for you... please forgive me? 💙\n\n${link}`)}`, '_blank'); });
+</script>
+</body>
+</html>
