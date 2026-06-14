@@ -106,7 +106,7 @@
 <div class="hearts-bg" id="heartsBg"></div>
 <div id="formPage">
   <div class="form-card">
-    <div class="mascot"><img src="tenor2.gif" class="mascot-img" alt="sorry cat"></div>
+    <div class="mascot"><img src="tenor1.gif" class="mascot-img" alt="sorry cat"></div>
     <h1 class="form-title">Make them <em>forgive</em> you 💙</h1>
     <p class="form-subtitle">✨ A heartfelt apology they can't resist ✨</p>
     <div class="field"><label>💔 Their Name</label><input type="text" id="theirName" placeholder="e.g., Priya" maxlength="40"></div>
@@ -129,7 +129,7 @@
   <div class="top-controls"><button class="back-btn-prev" id="backBtnPrev" style="display: none;">← Back</button><div style="flex:1"></div><button class="mute-btn" id="muteBtnPrev">🔊</button></div>
   <div id="expContent">
     <div id="questionScreen"><h1 class="exp-title" id="expTitle">Will you forgive me? 💙</h1><p class="exp-msg" id="expSubMsg">From: Someone who messed up 💌</p><div class="btn-row"><button class="forgive-btn" id="forgiveBtnExp">I Forgive You 💙</button><button class="no-btn" id="noBtnExp">Not Yet 😔</button></div></div>
-    <div id="celebScreen"><h1 class="celeb-title">Thank You...</h1><p class="celeb-msg" id="celebMsg">You've made my heart whole again. I promise to be better. 🌹</p><div class="gif-box"><img id="celebGif" src="https://media.tenor.com/9Y3zRjKvT9sAAAAi/hug-forgive.gif" alt="forgiveness hug" onerror="this.src='https://media.tenor.com/1vY1pzRwIocAAAAi/hug-cute.gif'"></div><div class="confetti-layer" id="confettiLayer"></div></div>
+    <div id="celebScreen"><h1 class="celeb-title">Thank You...</h1><p class="celeb-msg" id="celebMsg">You've made my heart whole again. I promise to be better. 🌹</p><div class="gif-box"><img id="celebGif" src="tenor2.gif" alt="forgiveness hug" onerror="this.src='https://media.tenor.com/1vY1pzRwIocAAAAi/hug-cute.gif'"></div><div class="confetti-layer" id="confettiLayer"></div></div>
   </div>
   <div id="bottomStrip"><button class="gen-link-btn" id="generateLinkBtn">💌 Generate Apology Link & Share</button><div id="linkBox"><p class="link-title">🎉 Your apology link is ready!</p><div class="link-url" id="linkUrl">link will appear</div><div class="link-btns"><button class="copy-link-btn" id="copyLinkBtn">Copy 📋</button><button class="wa-btn" id="waShareBtn">📱 WhatsApp</button></div></div></div>
 </div>
@@ -209,7 +209,7 @@
     if (!currentPageData) currentPageData = getCurrentPageData(); 
     const finalAmount = Math.max(0, basePrice - appliedDiscount); 
     if (finalAmount === 0) { onPaymentSuccess('FREE_COUPON_' + Date.now()); return; }
-    const options = { key: RAZORPAY_KEY_ID, amount: finalAmount * 100, currency: "INR", name: "Apology Page", description: `For ${currentPageData.theirName}`, image: "https://media.tenor.com/YJ9qWp7VqX0AAAAi/sorry-cat.gif", handler: (response) => onPaymentSuccess(response.razorpay_payment_id), prefill: { name: currentPageData.fromName }, theme: { color: "#4a90e2" } };
+    const options = { key: RAZORPAY_KEY_ID, amount: finalAmount * 100, currency: "INR", name: "Apology Page", description: `For ${currentPageData.theirName}`, image: "tenor2.gif", handler: (response) => onPaymentSuccess(response.razorpay_payment_id), prefill: { name: currentPageData.fromName }, theme: { color: "#4a90e2" } };
     const rzp = new Razorpay(options); rzp.open();
   });
   
